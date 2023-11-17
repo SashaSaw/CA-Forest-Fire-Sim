@@ -18,6 +18,27 @@ import capyle.utils as utils
 import numpy as np
 import random
 
+def wind_func(neighbourstates, winddirection):
+    #  nw, n, ne, w, e, sw, s, se
+    nw, n, ne, w, e, sw, s, se = neighbourstates
+    if ((winddirection == "nw") and (se == 1 or se == 2 or se == 3)):
+        return True
+    elif ((winddirection == "n") and (s == 1 or s == 2 or s == 3)):
+        return True
+    elif ((winddirection == "ne") and (sw == 1 or sw == 2 or sw == 3)):
+        return True
+    elif ((winddirection == "w") and (e == 1 or e == 2 or e == 3)):
+        return True
+    elif ((winddirection == "e") and (w == 1 or w == 2 or w == 3)):
+        return True
+    elif ((winddirection == "sw") and (ne == 1 or ne == 2 or ne == 3)):
+        return True
+    elif ((winddirection == "s") and (n == 1 or n == 2 or n == 3)):
+        return True
+    elif ((winddirection == "se") and (nw == 1 or nw == 2 or nw == 3)):
+        return True
+    else: return False
+
 
 def transition_func(grid, neighbourstates, neighbourcounts):
     # dead = state == 0, live = state == 1, sick = state == 2
@@ -25,14 +46,24 @@ def transition_func(grid, neighbourstates, neighbourcounts):
     burnt, burning1, burning2, burning3, chapparral, lake, dense_forest, scrubland, town = neighbourcounts
     burning = burning1 + burning2 + burning3
     # create boolean arrays for the birth & survival rules
+    winddirection = "s"
 
     now_burnt = (grid == 1)
-    now_burning1 = (grid == 2) | ((grid == 7) & (burning > 0)) | ((grid == 8) & (burning > 0))
-    now_burning2 = (grid == 3) | ((grid == 4) & (burning > 1))
-    now_burning3 = (grid == 6) & (burning > 2)
-    still_burning1 = ((grid == 1) & (random.randint(1, 100) > 90))
-    still_burning2 = ((grid == 2) & (random.randint(1, 100) > 50))
-    still_burning3 = ((grid == 3) & (random.randint(1, 100) > 20))
+    print("now burnt")
+    print(now_burnt)
+    if(wind_func(neighbourstates, winddirection)):
+        now_burning1 = (grid == 2) | (((grid == 7) & (burning > 0)) | ((grid == 8) & (burning > 0)) & (
+                    random.randint(1, 100) < 85))
+        now_burning2 = (grid == 3) | ((grid == 4) & (burning > 1) & (random.randint(1, 100) < 55))
+        now_burning3 = (grid == 6) & (burning > 2) & (random.randint(1, 100) < 15)
+    else:
+        now_burning1 = (grid == 2) | (((grid == 7) & (burning > 0)) | ((grid == 8) & (burning > 0)) & (
+                    random.randint(1, 100) < 75))
+        now_burning2 = (grid == 3) | ((grid == 4) & (burning > 1) & (random.randint(1, 100) < 45))
+        now_burning3 = (grid == 6) & (burning > 2) & (random.randint(1, 100) < 5)
+    still_burning1 = ((grid == 1) & (random.randint(1, 100) < 10))
+    still_burning2 = ((grid == 2) & (random.randint(1, 100) < 50))
+    still_burning3 = ((grid == 3) & (random.randint(1, 100) < 80))
 
     grid[now_burnt] = 0
     grid[now_burning1] = 1
