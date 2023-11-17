@@ -34,6 +34,39 @@ class CAConfig(object):
                          [4, 4, 4, 4, 4, 4, 4, 7, 4, 4],
                          [4, 4, 4, 4, 4, 4, 4, 4, 4, 4]])
         return grid
+    
+    def setup_grid_for(self):
+        grid = np.ones(self.grid_dims) * 4
+        grid_size = self.grid_dims[0]
+
+        
+        grid[0] = 0
+        grid[grid_size-1] = 0
+        
+        for i in range(0, grid_size-1):
+            grid[i][0] = 0
+            
+        for i in range(0, grid_size-1):
+            grid[i][grid_size-1] = 0
+            
+        for i in range(42, 58):
+            for j in range(1, 34):
+                grid[i][j] = 6
+                
+        for i in range(9, 34):
+            for j in range(25, 34):
+                grid[i][j] = 5
+                
+        for i in range(9, 74):
+            for j in range(57, 62):
+                grid[i][j] = 7
+                
+        for i in range(71, 76):
+            for j in range(15, 20):
+                grid[i][j] = 8
+
+        return grid
+                
 
     def fill_in_defaults(self):
         """ if any of the fields are not filled in in description
@@ -47,13 +80,13 @@ class CAConfig(object):
         # grid dimensions
         if self.grid_dims is None:
             if self.dimensions == 2:
-                self.grid_dims = (10, 10)
+                self.grid_dims = (81, 81)
             else:
                 self.grid_dims = gens_to_dims(self.num_generations)
 
         # initial grid
         if self.initial_grid is None:
-            self.initial_grid = self.setup_grid()
+            self.initial_grid = self.setup_grid_for()
 
         # neighbourhood array
         if self.nhood_arr is None:

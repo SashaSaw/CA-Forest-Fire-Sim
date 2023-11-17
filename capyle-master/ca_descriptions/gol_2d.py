@@ -52,7 +52,7 @@ def setup(args):
     config.title = "Conway's game of life"
     config.dimensions = 2
     config.states = (0, 1, 2, 3, 4, 5, 6, 7, 8)
-    #States: burnt, burning, chapparral, lake, dense forest, canyon
+    #States: burnt, burning1, burning2, burning3, chapparral, lake, dense forest, canyon, town
     # ------------------------------------------------------------------------
 
     # ---- Override the defaults below (these may be changed at anytime) ----
