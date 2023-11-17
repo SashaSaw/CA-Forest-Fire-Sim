@@ -16,57 +16,31 @@ sys.path.append(main_dir_loc + "capyle/guicomponents")
 from capyle.ca import Grid2D, Neighbourhood, CAConfig, randomise2d
 import capyle.utils as utils
 import numpy as np
+import random
 
 
 def transition_func(grid, neighbourstates, neighbourcounts):
     # dead = state == 0, live = state == 1, sick = state == 2
     # unpack state counts for all states
-    burnt, burning1, burning2, burning3, chapparral, lake, dense_forest, scrubland = neighbourcounts
+    burnt, burning1, burning2, burning3, chapparral, lake, dense_forest, scrubland, town = neighbourcounts
     burning = burning1 + burning2 + burning3
     # create boolean arrays for the birth & survival rules
 
-    still_burnt = (grid == 1)
-    now_burning1 = (grid == 2) | ((grid == 7) & (burning > 0))
+    now_burnt = (grid == 1)
+    now_burning1 = (grid == 2) | ((grid == 7) & (burning > 0)) | ((grid == 8) & (burning > 0))
     now_burning2 = (grid == 3) | ((grid == 4) & (burning > 1))
     now_burning3 = (grid == 6) & (burning > 2)
-    still_chapparral = ((grid == 4) & (burning < 2))
-    still_lake = (grid == 5)
-    still_forest = (grid == 6) & (burning < 3)
-    still_scrubland = (grid == 7) & (burning == 0)
+    still_burning1 = ((grid == 1) & (random.randint(1, 100) > 90))
+    still_burning2 = ((grid == 2) & (random.randint(1, 100) > 50))
+    still_burning3 = ((grid == 3) & (random.randint(1, 100) > 20))
 
-    grid[still_burnt] = 0
+    grid[now_burnt] = 0
     grid[now_burning1] = 1
     grid[now_burning2] = 2
     grid[now_burning3] = 3
-    grid[still_chapparral] = 4
-    grid[still_lake] = 5
-    grid[still_forest] = 6
-    grid[still_scrubland] = 7
-
-    '''
-    # if 3 live neighbours and is dead -> cell born
-    birth = (live_neighbours == 3) & (grid == 0)
-
-    # if more than 2 neighbours are sick, live -> sick, 4 or less neighbours are sick, sick -> sick  or if there are more
-    # than 0 sick neighbours and sick, sick -> sick
-    sick = (((sick_neighbours > 2) | (sick_neighbours <= 4)) & (grid == 1)) | (
-        (sick_neighbours > 0) & (grid == 2)
-    )
-
-    # if 2 or 3 live neighbours and is alive -> survives, if no sick neighbours, sick -> survive
-    survive = (((live_neighbours == 2) | (live_neighbours == 3)) & (grid == 1)) | (
-        (sick_neighbours == 0) & (grid == 2)
-    )
-
-    # death = (live_neighbours <= 1) | (sick_neighbours <= 1) | (sick_neighbours > 4)
-
-    # Set all cells to 0 (dead)
-    grid[:, :] = 0
-
-    # Set cells to 1 where either cell is born or survives
-    grid[birth | survive] = 1
-    grid[sick] = 2
-    '''
+    grid[still_burning1] = 1
+    grid[still_burning2] = 2
+    grid[still_burning3] = 3
     
     return grid
 
@@ -77,13 +51,13 @@ def setup(args):
     # ---THE CA MUST BE RELOADED IN THE GUI IF ANY OF THE BELOW ARE CHANGED---
     config.title = "Conway's game of life"
     config.dimensions = 2
-    config.states = (0, 1, 2, 3, 4, 5, 6, 7)
-    #States: burnt, burning1, burning2, burning3, chapparral, lake, dense forest, canyon
+    config.states = (0, 1, 2, 3, 4, 5, 6, 7, 8)
+    #States: burnt, burning, chapparral, lake, dense forest, canyon
     # ------------------------------------------------------------------------
 
     # ---- Override the defaults below (these may be changed at anytime) ----
 
-    config.state_colors = [(0, 0, 0), (1, 0, 0), (1, 0, 0), (1, 0, 0), (0.6, 0.6, 0), (0.4, 1, 1), (0.4, 0.2, 0), (1, 1, 0.2)]
+    config.state_colors = [(0, 0, 0), (1, 0, 0), (0.6, 0, 0), (1, 0.5, 0), (0.6, 0.6, 0), (0.4, 1, 1), (0.4, 0.2, 0), (1, 1, 0.2), (1, 0, 1)]
     config.num_generations = 150
 
     # ----------------------------------------------------------------------
