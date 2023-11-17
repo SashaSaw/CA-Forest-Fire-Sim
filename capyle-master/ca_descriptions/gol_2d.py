@@ -21,7 +21,7 @@ import numpy as np
 def transition_func(grid, neighbourstates, neighbourcounts):
     # dead = state == 0, live = state == 1, sick = state == 2
     # unpack state counts for all states
-    burnt, burning1, burning2, burning3, chapparral, lake, dense_forest, scrubland = neighbourcounts
+    burnt, burning1, burning2, burning3, chapparral, lake, dense_forest, scrubland, town = neighbourcounts
     burning = burning1 + burning2 + burning3
     # create boolean arrays for the birth & survival rules
 
@@ -77,13 +77,13 @@ def setup(args):
     # ---THE CA MUST BE RELOADED IN THE GUI IF ANY OF THE BELOW ARE CHANGED---
     config.title = "Conway's game of life"
     config.dimensions = 2
-    config.states = (0, 1, 2, 3, 4, 5, 6, 7)
-    #States: burnt, burning1, burning2, burning3, chapparral, lake, dense forest, canyon
+    config.states = (0, 1, 2, 3, 4, 5, 6, 7, 8)
+    #States: burnt, burning1, burning2, burning3, chapparral, lake, dense forest, canyon, town
     # ------------------------------------------------------------------------
 
     # ---- Override the defaults below (these may be changed at anytime) ----
 
-    config.state_colors = [(0, 0, 0), (1, 0, 0), (1, 0, 0), (1, 0, 0), (0.6, 0.6, 0), (0.4, 1, 1), (0.4, 0.2, 0), (1, 1, 0.2)]
+    config.state_colors = [(0, 0, 0), (1, 0, 0), (1, 0, 0), (1, 0, 0), (0.6, 0.6, 0), (0.4, 1, 1), (0.4, 0.2, 0), (1, 1, 0.2), (1, 1, 1)]
     config.num_generations = 150
 
     # ----------------------------------------------------------------------
