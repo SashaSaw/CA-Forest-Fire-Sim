@@ -51,6 +51,7 @@ def transition_func(grid, neighbourstates, neighbourcounts):
     now_burnt = (grid == 1)
     print("now burnt")
     print(now_burnt)
+    '''
     if(wind_func(neighbourstates, winddirection)):
         now_burning1 = (grid == 2) | (((grid == 7) & (burning > 0)) | ((grid == 8) & (burning > 0)) & (
                     random.randint(1, 100) < 85))
@@ -61,6 +62,16 @@ def transition_func(grid, neighbourstates, neighbourcounts):
                     random.randint(1, 100) < 75))
         now_burning2 = (grid == 3) | ((grid == 4) & (burning > 1) & (random.randint(1, 100) < 45))
         now_burning3 = (grid == 6) & (burning > 2) & (random.randint(1, 100) < 5)
+    '''
+
+    now_burning1 = (grid == 2) | (((grid == 7)  | (grid == 8)) & (burning > 0))
+    now_burning2 = (grid == 3) | ((grid == 4) & (burning > 1))
+    now_burning3 = ((grid == 6) & ((burning2 > 3) | (burning3 + burning2 > 2)))
+    still_burning1 = ((grid == 1) & (random.randint(1, 100) > 90))
+    still_burning2 = ((grid == 2) & (random.randint(1, 100) > 50))
+    still_burning3 = ((grid == 3) & (random.randint(1, 100) > 20))
+
+
     still_burning1 = ((grid == 1) & (random.randint(1, 100) < 10))
     still_burning2 = ((grid == 2) & (random.randint(1, 100) < 50))
     still_burning3 = ((grid == 3) & (random.randint(1, 100) < 80))
