@@ -126,8 +126,6 @@ class Grid2D(Grid):
         print (nw.shape)
         print (nw)
         n = nhood_arr[0, 1] * grid[0:-2, 1:-1]
-        print(n.shape)
-        print(n)
         ne = nhood_arr[0, 2] * grid[0:-2, 2:]
         w = nhood_arr[1, 0] * grid[1:-1, 0:-2]
         e = nhood_arr[1, 2] * grid[1:-1, 2:]
