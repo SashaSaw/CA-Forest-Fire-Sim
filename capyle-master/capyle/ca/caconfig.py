@@ -40,29 +40,29 @@ class CAConfig(object):
         grid_size = self.grid_dims[0]
 
         
-        grid[0] = 0
-        grid[grid_size-1] = 0
+        # grid[0] = 0
+        # grid[grid_size-1] = 0
         
-        for i in range(0, grid_size-1):
-            grid[i][0] = 0
+        # for i in range(0, grid_size-1):
+        #     grid[i][0] = 0
             
-        for i in range(0, grid_size-1):
-            grid[i][grid_size-1] = 0
+        # for i in range(0, grid_size-1):
+        #     grid[i][grid_size-1] = 0
             
-        for i in range(42, 58):
-            for j in range(1, 34):
+        for i in range(41, 57):
+            for j in range(0, 33):
                 grid[i][j] = 6
                 
-        for i in range(9, 34):
-            for j in range(25, 34):
+        for i in range(8, 33):
+            for j in range(24, 33):
                 grid[i][j] = 5
                 
-        for i in range(9, 74):
-            for j in range(57, 62):
+        for i in range(8, 73):
+            for j in range(56, 61):
                 grid[i][j] = 7
                 
-        for i in range(71, 76):
-            for j in range(15, 20):
+        for i in range(70, 75):
+            for j in range(14, 19):
                 grid[i][j] = 8
 
         return grid
@@ -80,7 +80,7 @@ class CAConfig(object):
         # grid dimensions
         if self.grid_dims is None:
             if self.dimensions == 2:
-                self.grid_dims = (81, 81)
+                self.grid_dims = (80, 80)
             else:
                 self.grid_dims = gens_to_dims(self.num_generations)
 

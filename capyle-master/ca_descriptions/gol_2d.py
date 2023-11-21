@@ -47,6 +47,12 @@ def transition_func(grid, neighbourstates, neighbourcounts):
     burning = burning1 + burning2 + burning3
     # create boolean arrays for the birth & survival rules
     winddirection = "s"
+    
+    prob_forest = 0.1
+    prob_scrubland = 0.4
+    prob_chaparral = 0.7
+    prob_water = 0
+    prob_town = 0.5
 
     now_burnt = (grid == 1)
     print("now burnt")
@@ -101,6 +107,7 @@ def setup(args):
 
     config.state_colors = [(0, 0, 0), (1, 0, 0), (0.6, 0, 0), (1, 0.5, 0), (0.6, 0.6, 0), (0.4, 1, 1), (0.4, 0.2, 0), (1, 1, 0.2), (1, 0, 1)]
     config.num_generations = 150
+    config.wrap = False
 
     # ----------------------------------------------------------------------
 
