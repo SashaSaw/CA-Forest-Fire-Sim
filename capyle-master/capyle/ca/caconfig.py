@@ -38,7 +38,7 @@ class CAConfig(object):
     def setup_grid_for(self):
         grid = np.ones(self.grid_dims) * 4
         grid_size = self.grid_dims[0]
-
+        grid[0][grid_size-1] = 1
         
         # grid[0] = 0
         # grid[grid_size-1] = 0

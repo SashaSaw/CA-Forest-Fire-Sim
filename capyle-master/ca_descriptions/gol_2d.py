@@ -18,6 +18,14 @@ import capyle.utils as utils
 import numpy as np
 import random
 
+global prob_forest, prob_scrubland, prob_chaparral, prob_water, prob_town, forest_rate, scrub_rate, chaparral_rate, town_rate
+
+prob_forest = 0.85
+prob_chaparral = 0.4
+prob_scrubland = 0.15
+prob_water = 0
+prob_town = 0.5
+
 def wind_func(neighbourstates, winddirection):
     #  nw, n, ne, w, e, sw, s, se
     nw, n, ne, w, e, sw, s, se = neighbourstates
@@ -40,7 +48,7 @@ def wind_func(neighbourstates, winddirection):
     else: return False
 
 
-def transition_func(grid, neighbourstates, neighbourcounts):
+def transition_func(grid, neighbourstates, neighbourcounts, fuelgrid, initgrid):
     # dead = state == 0, live = state == 1, sick = state == 2
     # unpack state counts for all states
     burnt, burning1, burning2, burning3, chapparral, lake, dense_forest, scrubland, town = neighbourcounts
@@ -48,56 +56,63 @@ def transition_func(grid, neighbourstates, neighbourcounts):
     # create boolean arrays for the birth & survival rules
     winddirection = "s"
     
-    prob_forest = 0.1
-    prob_scrubland = 0.4
-    prob_chaparral = 0.7
-    prob_water = 0
-    prob_town = 0.5
+    fuel_grid = update_fuel_grid(grid, fuelgrid, initgrid)
+    
+    now_burnt = (fuel_grid <= 0)
 
-    now_burnt = (grid == 1)
-    print("now burnt")
-    print(now_burnt)
-    '''
-    if(wind_func(neighbourstates, winddirection)):
-        now_burning1 = (grid == 2) | (((grid == 7) & (burning > 0)) | ((grid == 8) & (burning > 0)) & (
-                    random.randint(1, 100) < 85))
-        now_burning2 = (grid == 3) | ((grid == 4) & (burning > 1) & (random.randint(1, 100) < 55))
-        now_burning3 = (grid == 6) & (burning > 2) & (random.randint(1, 100) < 15)
-    else:
-        now_burning1 = (grid == 2) | (((grid == 7) & (burning > 0)) | ((grid == 8) & (burning > 0)) & (
-                    random.randint(1, 100) < 75))
-        now_burning2 = (grid == 3) | ((grid == 4) & (burning > 1) & (random.randint(1, 100) < 45))
-        now_burning3 = (grid == 6) & (burning > 2) & (random.randint(1, 100) < 5)
-    '''
-
-    now_burning1 = (grid == 2) | (((grid == 7)  | (grid == 8)) & (burning > 0))
-    now_burning2 = (grid == 3) | ((grid == 4) & (burning > 1))
-    now_burning3 = ((grid == 6) & ((burning2 > 3) | (burning3 + burning2 > 2)))
-    still_burning1 = ((grid == 1) & (random.randint(1, 100) > 90))
-    still_burning2 = ((grid == 2) & (random.randint(1, 100) > 50))
-    still_burning3 = ((grid == 3) & (random.randint(1, 100) > 20))
-
-
-    still_burning1 = ((grid == 1) & (random.randint(1, 100) < 10))
-    still_burning2 = ((grid == 2) & (random.randint(1, 100) < 50))
-    still_burning3 = ((grid == 3) & (random.randint(1, 100) < 80))
+    not_burning_cells = (grid != 1) & (grid != 0) & (grid != 5)
+    burning_neighbours = (neighbourcounts[1] > 0)
+    burn_prob = random.uniform(0.1,1)
+    prob_grid = burn_prob_grid(grid)
+    
+    now_burning1 = ((not_burning_cells & burning_neighbours) & (burn_prob < prob_grid))
+    still_burning1 = (grid == 1) & (fuel_grid > 0)
 
     grid[now_burnt] = 0
     grid[now_burning1] = 1
-    grid[now_burning2] = 2
-    grid[now_burning3] = 3
     grid[still_burning1] = 1
-    grid[still_burning2] = 2
-    grid[still_burning3] = 3
     
     return grid
 
+def burn_prob_grid(grid):
+    
+    forest = (grid == 6) * (1-prob_forest)
+    chaparral = (grid == 4) * (1-prob_chaparral)
+    scrub_land = (grid == 7) * (1-prob_scrubland)
+    water = (grid == 5) 
+    town = (grid == 8) * prob_town
+    
+    prob_grid = forest + chaparral + scrub_land + water + town
+    return prob_grid
+
+def update_fuel_grid(grid, fuel_grid, init_grid):
+    burning_cells = (grid == 1)
+    
+    forest = (init_grid == 6)
+    burning_forest = burning_cells & forest
+    fuel_grid[burning_forest] -= 5
+    
+    chaparral = (init_grid == 4)
+    burning_chaparral = burning_cells & chaparral
+    fuel_grid[burning_chaparral] -= 10
+    
+    scrub_land = (init_grid == 7)
+    burning_scrub = burning_cells & scrub_land
+    fuel_grid[burning_scrub] -= 30
+    
+    town = (init_grid == 8)
+    burning_town = burning_cells & town
+    fuel_grid[burning_town] -= 10
+    
+    return fuel_grid
+
+    
 
 def setup(args):
     config_path = args[0]
     config = utils.load(config_path)
     # ---THE CA MUST BE RELOADED IN THE GUI IF ANY OF THE BELOW ARE CHANGED---
-    config.title = "Conway's game of life"
+    config.title = "CA Simultation of Forest Fires"
     config.dimensions = 2
     config.states = (0, 1, 2, 3, 4, 5, 6, 7, 8)
     #States: burnt, burning1, burning2, burning3, chapparral, lake, dense forest, canyon, town
@@ -106,7 +121,7 @@ def setup(args):
     # ---- Override the defaults below (these may be changed at anytime) ----
 
     config.state_colors = [(0, 0, 0), (1, 0, 0), (0.6, 0, 0), (1, 0.5, 0), (0.6, 0.6, 0), (0.4, 1, 1), (0.4, 0.2, 0), (1, 1, 0.2), (1, 0, 1)]
-    config.num_generations = 150
+    config.num_generations = 300
     config.wrap = False
 
     # ----------------------------------------------------------------------
@@ -121,13 +136,15 @@ def setup(args):
 def main():
     # Open the config object
     config = setup(sys.argv[1:])
+    initial_grid = config.initial_grid
 
+    fuel_grid = np.ones(initial_grid.shape) * 100
     # Create grid object
-    grid = Grid2D(config, transition_func)
+    grid = Grid2D(config, (transition_func, fuel_grid, initial_grid))
 
     # Run the CA, save grid state every generation to timeline
     timeline = grid.run()
-
+    
     # save updated config to file
     config.save()
     # save timeline to file
