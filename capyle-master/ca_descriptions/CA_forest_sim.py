@@ -21,8 +21,8 @@ import random
 global prob_forest, prob_scrubland, prob_chaparral, prob_water, prob_town, forest_rate, scrub_rate, chaparral_rate, town_rate
 
 prob_forest = 0.85
-prob_chaparral = 0.4
-prob_scrubland = 0.15
+prob_chaparral = 0.6
+prob_scrubland = 0.3
 prob_water = 0
 prob_town = 0.5
 
@@ -64,12 +64,12 @@ def transition_func(grid, neighbourstates, neighbourcounts, fuelgrid, initgrid):
     not_burning_cells = (grid != 1) & (grid != 0) & (grid != 5)
     burning_neighbours = (neighbourcounts[1] > 0)
     winddirection = (S != -100)
-    print(burning_neighbours)
     wind_effect = (burning_neighbours) & winddirection
-    burn_prob = random.uniform(0.1,1)
+    burn_prob = update_probability()
+    print(burn_prob)
     prob_grid = burn_prob_grid(grid, wind_effect)
     
-    now_burning1 = ((not_burning_cells & burning_neighbours) & (burn_prob < prob_grid))
+    now_burning1 = ((not_burning_cells & burning_neighbours) & (burn_prob > prob_grid))
     still_burning1 = (grid == 1) & (fuel_grid > 0)
 
     grid[now_burnt] = 0
@@ -87,7 +87,7 @@ def burn_prob_grid(grid, wind):
     town = (grid == 8) * prob_town
     
     prob_grid = forest + chaparral + scrub_land + water + town
-    prob_grid[wind] += 0.1
+    prob_grid[wind] += 0.15
     return prob_grid
 
 def update_fuel_grid(grid, fuel_grid, init_grid):
@@ -95,23 +95,24 @@ def update_fuel_grid(grid, fuel_grid, init_grid):
     
     forest = (init_grid == 6)
     burning_forest = burning_cells & forest
-    fuel_grid[burning_forest] -= 5
+    fuel_grid[burning_forest] -= 50
     
     chaparral = (init_grid == 4)
     burning_chaparral = burning_cells & chaparral
-    fuel_grid[burning_chaparral] -= 10
+    fuel_grid[burning_chaparral] -= 100
     
     scrub_land = (init_grid == 7)
     burning_scrub = burning_cells & scrub_land
-    fuel_grid[burning_scrub] -= 30
+    fuel_grid[burning_scrub] -= 300
     
     town = (init_grid == 8)
     burning_town = burning_cells & town
-    fuel_grid[burning_town] -= 10
+    fuel_grid[burning_town] -= 100
     
     return fuel_grid
 
-    
+def update_probability():
+    return random.uniform(0,1)
 
 def setup(args):
     config_path = args[0]
@@ -143,7 +144,7 @@ def main():
     config = setup(sys.argv[1:])
     initial_grid = config.initial_grid
 
-    fuel_grid = np.ones(initial_grid.shape) * 100
+    fuel_grid = np.ones(initial_grid.shape) * 1000
     # Create grid object
     grid = Grid2D(config, (transition_func, fuel_grid, initial_grid))
 
