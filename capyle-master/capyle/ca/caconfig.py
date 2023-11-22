@@ -61,8 +61,8 @@ class CAConfig(object):
             for j in range(56, 61):
                 grid[i][j] = 7
                 
-        for i in range(70, 75):
-            for j in range(14, 19):
+        for i in range(70, 74):
+            for j in range(14, 18):
                 grid[i][j] = 8
 
         return grid
