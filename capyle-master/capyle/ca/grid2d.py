@@ -123,8 +123,6 @@ class Grid2D(Grid):
             nhood_arr = np.ones((3, 3))
         # Return the NW N NE, W self E, SW S SE neighbourgrids
         nw = nhood_arr[0, 0] * grid[0:-2, 0:-2]
-        print (nw.shape)
-        print (nw)
         n = nhood_arr[0, 1] * grid[0:-2, 1:-1]
         ne = nhood_arr[0, 2] * grid[0:-2, 2:]
         w = nhood_arr[1, 0] * grid[1:-1, 0:-2]

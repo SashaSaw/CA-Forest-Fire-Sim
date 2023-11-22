@@ -38,6 +38,13 @@ def compareburningandneighbourboolean(neighbour, burning, probability):
                     burning[i][j] = False
             # else: burning[i][j] = False
     return burning
+
+def applyburningprobabilities(burning, probability):
+    for i in range(80):
+        for j in range(80):
+            if (burning[i][j] == True & (random.randint(1,100) > probability-15)):
+                burning[i][j] = False
+    return burning
 def wind_func(neighbourstates, winddirection, now_burning, probability):
     #  nw, n, ne, w, e, sw, s, se
     nw, n, ne, w, e, sw, s, se = neighbourstates
@@ -83,9 +90,9 @@ def transition_func(grid, neighbourstates, neighbourcounts):
     # create boolean arrays for the birth & survival rules
     winddirection = "s"
     wind = False
-    prob_forest = 0.1
-    prob_scrubland = 0.4
-    prob_chaparral = 0.7
+    prob_forest = 0.25
+    prob_scrubland = 0.8
+    prob_chaparral = 0.6
     prob_water = 0
     prob_town = 0.5
 
@@ -106,13 +113,13 @@ def transition_func(grid, neighbourstates, neighbourcounts):
     now_burning2 = (grid == 3) | ((grid == 4) & (burning > 1))
     now_burning3 = (grid == 6) & (burning > 1)
     if (wind):
-        now_burning1 = wind_func(neighbourstates, winddirection, now_burning1,85)
-        now_burning2 = wind_func(neighbourstates, winddirection, now_burning2, 60)
-        now_burning3 = wind_func(neighbourstates, winddirection, now_burning3, 25)
+        now_burning1 = wind_func(neighbourstates, winddirection, now_burning1, prob_scrubland*100)
+        now_burning2 = wind_func(neighbourstates, winddirection, now_burning2, prob_chaparral*100)
+        now_burning3 = wind_func(neighbourstates, winddirection, now_burning3, prob_forest*100)
     else:
-        now_burning1 = ((grid == 2) | (((grid == 7) & (burning > 0) | (grid == 8)) & (burning > 0))) & (random.randint(1, 100) > 70)
-        now_burning2 = ((grid == 3) | ((grid == 4) & (burning > 1))) & (random.randint(1,100) > 45)
-        now_burning3 = ((grid == 6) & (burning > 1)) & (random.randint(1,100) > 10)
+        now_burning1 = applyburningprobabilities(now_burning1, prob_scrubland*100)
+        now_burning2 = applyburningprobabilities(now_burning2, prob_chaparral*100)
+        now_burning3 = applyburningprobabilities(now_burning3, prob_forest*100)
 
     still_burning1 = ((grid == 1) & (random.randint(1, 100) < 10))
     still_burning2 = ((grid == 2) & (random.randint(1, 100) < 60))
