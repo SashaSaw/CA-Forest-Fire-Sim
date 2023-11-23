@@ -18,6 +18,8 @@ import capyle.utils as utils
 import numpy as np
 import random
 
+# loops through the neighbour grid setting values that correspond to burning to True
+# and all other values to false
 def burningneighbourboolean(neighbour):
     for x in range(80):
         for y in range(80):
@@ -27,6 +29,8 @@ def burningneighbourboolean(neighbour):
                 neighbour[x][y] = False
     return neighbour
 
+# sets all burning values from True to False based on a probability
+# lower probability for cells without a burning neighbour on the opposite side of wind direction
 def compareburningandneighbourboolean(neighbour, burning, probability):
     for i in range(80):
         for j in range(80):
@@ -39,12 +43,17 @@ def compareburningandneighbourboolean(neighbour, burning, probability):
             # else: burning[i][j] = False
     return burning
 
+# loops through and sets all burning values from True to False using a lower probability
+# to represent no wind
 def applyburningprobabilities(burning, probability):
     for i in range(80):
         for j in range(80):
             if (burning[i][j] == True & (random.randint(1,100) > probability-15)):
                 burning[i][j] = False
     return burning
+
+# uses the above functions to edit now_burning grids so that the corresponding wind probabilities are applied
+# based on an input of winddirection
 def wind_func(neighbourstates, winddirection, now_burning, probability):
     #  nw, n, ne, w, e, sw, s, se
     nw, n, ne, w, e, sw, s, se = neighbourstates
@@ -88,8 +97,11 @@ def transition_func(grid, neighbourstates, neighbourcounts):
     burnt, burning1, burning2, burning3, chapparral, lake, dense_forest, scrubland, town = neighbourcounts
     burning = burning1 + burning2 + burning3
     # create boolean arrays for the birth & survival rules
+    #winddirection can be set to s for southern wind,se,e,ne,n,nw,w or sw for their corresponding wind directions
     winddirection = "s"
-    wind = False
+    # setting wind to true means that wind effects fire spread in the wind direction
+    # setting win to false means that the wind has no effect
+    wind = True
     prob_forest = 0.25
     prob_scrubland = 0.8
     prob_chaparral = 0.6
@@ -149,7 +161,7 @@ def setup(args):
     # ---- Override the defaults below (these may be changed at anytime) ----
 
     config.state_colors = [(0, 0, 0), (1, 0, 0), (0.6, 0, 0), (1, 0.5, 0), (0.6, 0.6, 0), (0.4, 1, 1), (0.4, 0.2, 0), (1, 1, 0.2), (1, 0, 1)]
-    config.num_generations = 150
+    config.num_generations = 200
     config.wrap = False
 
     # ----------------------------------------------------------------------
