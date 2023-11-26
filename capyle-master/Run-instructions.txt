@@ -1,0 +1,12 @@
+To run the program follow the instructions below:
+
+Step 1:
+        Navigate to the capyle-master folder and replace the files './ca_descriptions/gol_2d.py' and './capyle/ca/caconfig.py'
+        with the provided files 
+
+Step 2: 
+        Navigate to capyle-master file location and run the command 'python main.py'
+
+Step 3:
+        Click file - open, then select the gol_2d.py file and run the simulation
+

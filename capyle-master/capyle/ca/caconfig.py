@@ -38,16 +38,9 @@ class CAConfig(object):
     def setup_grid_for(self):
         grid = np.ones(self.grid_dims) * 4
         grid_size = self.grid_dims[0]
-
-        
-        # grid[0] = 0
-        # grid[grid_size-1] = 0
-        
-        # for i in range(0, grid_size-1):
-        #     grid[i][0] = 0
-            
-        # for i in range(0, grid_size-1):
-        #     grid[i][grid_size-1] = 0
+                
+        for i in range(grid_size-3, grid_size):
+            grid[0][i] = 1
             
         for i in range(41, 57):
             for j in range(0, 33):
@@ -64,6 +57,7 @@ class CAConfig(object):
         for i in range(70, 74):
             for j in range(14, 18):
                 grid[i][j] = 8
+                
 
         return grid
                 
